@@ -1,0 +1,571 @@
+<Page
+    x:Class="RemoteVault.Desktop.WPF.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:RemoteVault.Desktop.WPF.ViewModels"
+    mc:Ignorable="d"
+    Style="{StaticResource AppRoot}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="MainGrid" Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0">
+                <TextBlock FontSize="34" FontWeight="SemiBold" Text="Settings" Margin="0,0,0,8" />
+                <TextBlock MaxWidth="900" HorizontalAlignment="Left" Opacity="0.78"
+                           Text="Choose where backups are stored, which folders are protected, and when backups run."
+                           TextWrapping="Wrap" Margin="0,0,0,8" />
+                <!-- InfoBar replacement: styled border with config path + edit mode message -->
+                <Border Padding="12" CornerRadius="8" BorderThickness="1"
+                        BorderBrush="{StaticResource InfoStrokeBrush}" Background="{StaticResource InfoBackgroundBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding EditModeMessage}" TextWrapping="Wrap" Margin="0,0,0,2" />
+                            <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="{Binding ConfigFilePath, StringFormat='Saved in {0}'}" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center"
+                                Style="{StaticResource PrimaryButton}"
+                                Content="Edit settings"
+                                Command="{Binding UnlockEditingCommand}"
+                                Visibility="{Binding EditButtonVisibility}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!-- Application status -->
+            <Border Grid.Row="2" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel>
+                    <TextBlock FontSize="22" FontWeight="SemiBold"
+                               Text="Status" Margin="0,0,0,14" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Padding="16" CornerRadius="14"
+                                Background="{StaticResource CardBackgroundSecondaryBrush}">
+                            <StackPanel>
+                                <TextBlock Opacity="0.7" Text="Setup" Margin="0,0,0,4" />
+                                <TextBlock FontSize="18" FontWeight="SemiBold"
+                                           Text="{Binding StatusConfiguration}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Padding="16" CornerRadius="14"
+                                Background="{StaticResource CardBackgroundSecondaryBrush}">
+                            <StackPanel>
+                                <TextBlock Opacity="0.7" Text="Last backup" Margin="0,0,0,4" />
+                                <TextBlock FontSize="18" FontWeight="SemiBold"
+                                           Text="{Binding StatusBackup}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Connection -->
+            <Grid Grid.Row="4">
+                <Border Padding="24" CornerRadius="18"
+                        Background="{StaticResource CardBackgroundBrush}">
+                    <StackPanel IsEnabled="{Binding IsEditMode}"
+                                Opacity="{Binding EditSectionOpacity}">
+                        <TextBlock FontSize="22" FontWeight="SemiBold"
+                                   Text="Storage connection" Margin="0,0,0,18" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="14" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="14" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Provider + Bucket -->
+                            <StackPanel Grid.Row="0" Grid.Column="0">
+                                <TextBlock Text="Provider" Margin="0,0,0,6" />
+                                <ComboBox HorizontalAlignment="Stretch"
+                                          DisplayMemberPath="DisplayName"
+                                          ItemsSource="{Binding ProviderOptions}"
+                                          SelectedItem="{Binding SelectedProvider, Mode=TwoWay}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="2">
+                                <TextBlock Text="{Binding BucketLabel}" Margin="0,0,0,6" />
+                                <TextBox
+                                         Text="{Binding BucketName, Mode=TwoWay}" />
+                            </StackPanel>
+
+                            <!-- Endpoint -->
+                            <StackPanel Grid.Row="2" Grid.Column="0">
+                                <TextBlock Text="{Binding EndpointLabel}" Margin="0,0,0,6" />
+                                <ComboBox HorizontalAlignment="Stretch"
+                                          DisplayMemberPath="DisplayName"
+                                          ItemsSource="{Binding EndpointOptions}"
+                                          SelectedItem="{Binding SelectedEndpoint, Mode=TwoWay}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.Column="2">
+                                <TextBlock Text="Endpoint address" Margin="0,0,0,6" />
+                                <TextBox IsReadOnly="True"
+                                         Text="{Binding SelectedEndpoint.Value, Mode=OneWay, FallbackValue=''}" />
+                            </StackPanel>
+
+                            <!-- Access + Secret -->
+                            <StackPanel Grid.Row="4" Grid.Column="0">
+                                <TextBlock Text="{Binding AccessLabel}" Margin="0,0,0,6" />
+                                <TextBox
+                                         Text="{Binding AccessKey, Mode=TwoWay}" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="4" Grid.Column="2">
+                                <TextBlock Text="{Binding SecretLabel}" Margin="0,0,0,6" />
+                                <PasswordBox x:Name="SecretKeyBox"
+                                             PasswordChanged="OnSecretKeyPasswordChanged" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Margin="0,14,0,0" Opacity="0.72" TextWrapping="Wrap"
+                                   Text="Field names follow the selected provider, so they match what you see in its console." />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Folders to back up -->
+            <Border Grid.Row="6" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel IsEnabled="{Binding IsEditMode}"
+                            Opacity="{Binding EditSectionOpacity}">
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock FontSize="22" FontWeight="SemiBold"
+                                       Text="Folders to back up" Margin="0,0,0,4" />
+                            <TextBlock Opacity="0.74" TextWrapping="Wrap"
+                                       Text="Each local folder is backed up into its own subfolder in the bucket." />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <Button Click="OnAddFolderClick" Content="Add folder" Margin="0,0,8,0" />
+                            <Button Command="{Binding RemoveSelectedFolderCommand}"
+                                    Content="Remove selected" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border BorderBrush="{StaticResource CardStrokeBrush}"
+                            BorderThickness="1" CornerRadius="14">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" CornerRadius="13,13,0,0"
+                                    Background="{StaticResource CardBackgroundSecondaryBrush}"
+                                    BorderBrush="{StaticResource CardStrokeBrush}" BorderThickness="0,0,0,1">
+                            <Grid Margin="16,12,16,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2.4*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Style="{StaticResource ColumnHeaderText}"
+                                           Text="Local folder (full path)" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource ColumnHeaderText}"
+                                           Text="Subfolder in bucket" />
+                            </Grid>
+                            </Border>
+
+                            <ListBox Grid.Row="1" Height="260"
+                                     ItemsSource="{Binding BackupFolders}"
+                                     SelectedItem="{Binding SelectedBackupFolder, Mode=TwoWay}"
+                                     SelectionMode="Single"
+                                     HorizontalContentAlignment="Stretch">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type viewModels:BackupFolderItem}">
+                                        <Grid Margin="16,10,16,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2.4*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBox BorderThickness="0" Background="Transparent" HorizontalAlignment="Stretch"
+                                                     Text="{Binding LocalPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox Grid.Column="1" BorderThickness="0" Background="Transparent"
+                                                     HorizontalAlignment="Stretch"
+                                                     Text="{Binding RemoteSubfolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Advanced backup options (Exclude patterns) -->
+            <Border Grid.Row="8" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel IsEnabled="{Binding IsEditMode}"
+                            Opacity="{Binding EditSectionOpacity}">
+                    <TextBlock FontSize="22" FontWeight="SemiBold"
+                               Text="Advanced options" Margin="0,0,0,16" />
+
+                    <Expander Header="Exclude patterns" IsExpanded="False">
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="Files and folders to skip, separated by semicolons or commas"
+                                       Margin="0,0,0,8" />
+                            <TextBox AcceptsReturn="True" MinHeight="80"
+                                     TextWrapping="Wrap"
+                                     Text="{Binding ExcludePatterns, Mode=TwoWay}"
+                                     Margin="0,0,0,8" />
+                            <TextBlock Opacity="0.68" TextWrapping="Wrap"
+                                       Text="Example: *.tmp; *.log; cache/; node_modules/" />
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Border>
+
+            <!-- Footer / Save -->
+            <Border Grid.Row="10" Padding="20" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock VerticalAlignment="Center" Opacity="0.8"
+                               Text="{Binding FooterStatus}" TextWrapping="Wrap" />
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Click="OnTestConnectionClick" Content="Test connection"
+                                Margin="0,0,10,0" />
+                        <Button Style="{StaticResource PrimaryButton}"
+                                IsEnabled="{Binding IsEditMode}"
+                                Click="OnSaveConfigurationClick"
+                                Content="Save settings" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Database features -->
+            <Border Grid.Row="12" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel>
+                    <TextBlock FontSize="22" FontWeight="SemiBold"
+                               Text="Database backup" Margin="0,0,0,12" />
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <CheckBox Content="Enable database backup"
+                                      IsChecked="{Binding EnableDatabaseBackups, Mode=TwoWay}"
+                                      Checked="OnDatabaseBackupToggleChanged"
+                                      Unchecked="OnDatabaseBackupToggleChanged" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <CheckBox Content="Enable database restore"
+                                      IsEnabled="{Binding IsDatabaseRestoreAvailable}"
+                                      IsChecked="{Binding EnableDatabaseRestore, Mode=TwoWay}"
+                                      Checked="OnDatabaseRestoreToggleChanged"
+                                      Unchecked="OnDatabaseRestoreToggleChanged" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock Text="Local folder for database backup files" Margin="0,0,0,6" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                     Text="{Binding DatabaseBackupRootPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Grid.Column="2"
+                                    IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                    Click="OnBrowseDatabaseBackupRootClick"
+                                    Content="Browse..." />
+                        </Grid>
+                        <Border Margin="0,8,0,0" Padding="12,10" CornerRadius="8" BorderThickness="1"
+                                BorderBrush="{StaticResource DangerStrokeBrush}" Background="{StaticResource DangerBackgroundBrush}"
+                                Visibility="{Binding DatabaseBackupRootProblemVisibility}">
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource BrandDangerBrush}"
+                                       Text="{Binding DatabaseBackupRootProblem}" />
+                        </Border>
+                        <TextBlock Margin="0,6,0,0" Opacity="0.68" TextWrapping="Wrap"
+                                   Text="Database backup files are written here first, then uploaded with the rest of the backup. Use a folder directly on C: or another drive, for example C:\RemoteVaultDB, not a folder in your user profile such as Documents or Downloads." />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock FontSize="18" FontWeight="SemiBold"
+                                   Text="Database tools" Margin="0,0,0,6" />
+                        <TextBlock Opacity="0.68" TextWrapping="Wrap" Margin="0,0,0,12"
+                                   Text="Leave these empty unless RemoteVault cannot find the tools on this computer." />
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="sqlcmd path" Margin="0,0,0,6" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                         Text="{Binding SqlcmdPath, Mode=TwoWay}" />
+                                <Button Grid.Column="2"
+                                        IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                        Click="OnBrowseSqlcmdPathClick"
+                                        Content="Browse..." />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="mysqldump path" Margin="0,0,0,6" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                         Text="{Binding MysqldumpPath, Mode=TwoWay}" />
+                                <Button Grid.Column="2"
+                                        IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                        Click="OnBrowseMysqldumpPathClick"
+                                        Content="Browse..." />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="pg_dump path" Margin="0,0,0,6" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                         Text="{Binding PgDumpPath, Mode=TwoWay}" />
+                                <Button Grid.Column="2"
+                                        IsEnabled="{Binding IsDatabaseBackupPathAvailable}"
+                                        Click="OnBrowsePgDumpPathClick"
+                                        Content="Browse..." />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Scheduling -->
+            <Border Grid.Row="14" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel IsEnabled="{Binding IsEditMode}"
+                            Opacity="{Binding EditSectionOpacity}">
+                    <TextBlock FontSize="22" FontWeight="SemiBold"
+                               Text="Scheduling" Margin="0,0,0,8" />
+                    <TextBlock Opacity="0.72" TextWrapping="Wrap" Margin="0,0,0,18"
+                               Text="Scheduled backups run through Windows Task Scheduler, even when RemoteVault is closed. Changes apply when you save." />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- File Backup Task -->
+                        <Border Grid.Column="0" Padding="18" CornerRadius="14"
+                                Background="{StaticResource CardBackgroundSecondaryBrush}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold"
+                                           Text="Files" Margin="0,0,0,12" />
+                                <CheckBox Content="Enable"
+                                          IsChecked="{Binding EnableFileBackupSchedule, Mode=TwoWay}"
+                                          Margin="0,0,0,12" />
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Frequency" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding ScheduleFrequencyOptions}"
+                                              SelectedItem="{Binding SelectedFileBackupFrequency, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Daily time (HH:mm)" Margin="0,0,0,6" />
+                                    <TextBox IsEnabled="{Binding IsFileBackupDailySchedule}"
+                                             Text="{Binding FileBackupDailyTimeText, Mode=TwoWay}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- DB Full Backup Task -->
+                        <Border Grid.Column="2" Padding="18" CornerRadius="14"
+                                Background="{StaticResource CardBackgroundSecondaryBrush}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold"
+                                           Text="Database full" Margin="0,0,0,12" />
+                                <CheckBox Content="Enable"
+                                          IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                          IsChecked="{Binding EnableDatabaseFullBackupSchedule, Mode=TwoWay}"
+                                          Margin="0,0,0,12" />
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Frequency" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding DatabaseScheduleFrequencyOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseFullBackupFrequency, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Run time (HH:mm)" Margin="0,0,0,6" />
+                                    <TextBox Text="{Binding DatabaseFullBackupTimeText, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding DatabaseFullBackupWeekdayVisibility}"
+                                            Margin="0,0,0,12">
+                                    <TextBlock Text="Day of week" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding WeekdayOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseFullBackupWeekday, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding DatabaseFullBackupMonthDayVisibility}">
+                                    <TextBlock Text="Day of month" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding MonthDayOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseFullBackupMonthDay, Mode=TwoWay}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- DB Diff Backup Task -->
+                        <Border Grid.Column="4" Padding="18" CornerRadius="14"
+                                Background="{StaticResource CardBackgroundSecondaryBrush}">
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="SemiBold"
+                                           Text="Differential (SQL Server)"
+                                           TextWrapping="Wrap" Margin="0,0,0,12" />
+                                <CheckBox Content="Enable"
+                                          IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                          IsChecked="{Binding EnableDatabaseDiffBackupSchedule, Mode=TwoWay}"
+                                          Margin="0,0,0,12" />
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Frequency" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding DatabaseDiffScheduleFrequencyOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseDiffBackupFrequency, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Run time (HH:mm)" Margin="0,0,0,6" />
+                                    <TextBox Text="{Binding DatabaseDiffBackupTimeText, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding DatabaseDiffBackupWeekdayVisibility}"
+                                            Margin="0,0,0,12">
+                                    <TextBlock Text="Day of week" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding WeekdayOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseDiffBackupWeekday, Mode=TwoWay}" />
+                                </StackPanel>
+                                <StackPanel Visibility="{Binding DatabaseDiffBackupMonthDayVisibility}">
+                                    <TextBlock Text="Day of month" Margin="0,0,0,6" />
+                                    <ComboBox HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding IsDatabaseScheduleAvailable}"
+                                              DisplayMemberPath="DisplayName"
+                                              ItemsSource="{Binding MonthDayOptions}"
+                                              SelectedItem="{Binding SelectedDatabaseDiffBackupMonthDay, Mode=TwoWay}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Storage cleanup -->
+            <Border Grid.Row="16" Padding="24" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel>
+                    <TextBlock FontSize="22" FontWeight="SemiBold"
+                               Text="Storage cleanup" Margin="0,0,0,8" />
+                    <TextBlock Opacity="0.72" TextWrapping="Wrap" Margin="0,0,0,16"
+                               Text="Every backup of a changed file adds a new version in your storage. Cleanup deletes the oldest versions and keeps the newest ones of each file, so storage does not grow forever. Deleted versions cannot be recovered." />
+
+                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding CanRunCleanup}">
+                        <TextBlock Text="Versions to keep per file" VerticalAlignment="Center" Margin="0,0,12,0" />
+                        <TextBox Width="70" MaxLength="3" HorizontalContentAlignment="Center"
+                                 AutomationProperties.Name="Versions to keep per file"
+                                 Text="{Binding CleanupKeepText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock VerticalAlignment="Center" Margin="12,0,20,0"
+                                   Foreground="{StaticResource TextSecondaryBrush}">
+                            <Run Text="minimum" /> <Run Text="{Binding CleanupMinimumKeep, Mode=OneWay}" />
+                        </TextBlock>
+                        <Button Content="Clean up old versions..." Click="OnCleanUpOldVersionsClick" />
+                    </StackPanel>
+
+                    <ProgressBar IsIndeterminate="True" Margin="0,14,0,0"
+                                 Visibility="{Binding IsCleanupRunning, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Margin="0,12,0,0" TextWrapping="Wrap" Text="{Binding CleanupStatus}" />
+                    <TextBlock Margin="0,6,0,0" FontSize="12.5" TextWrapping="Wrap"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Text="You are shown how many versions will be deleted and asked to confirm before anything is removed. Select Edit settings to use this." />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

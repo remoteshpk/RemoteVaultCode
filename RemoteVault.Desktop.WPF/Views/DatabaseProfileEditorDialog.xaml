@@ -1,0 +1,117 @@
+<Window
+    x:Class="RemoteVault.Desktop.WPF.Views.DatabaseProfileEditorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="DB Backup Profile" Width="720" Height="640"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="CanResize"
+    Style="{StaticResource AppRoot}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="FormPanel">
+
+                <!-- Validation message -->
+                <TextBlock x:Name="ValidationText" Foreground="Red"
+                           Visibility="Collapsed" TextWrapping="Wrap"
+                           Margin="0,0,0,10" />
+
+                <!-- Fields grid -->
+                <Grid x:Name="FieldsGrid" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="14" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Name" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="0" Grid.Column="2" x:Name="NameBox" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Database type" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="2" Grid.Column="2" x:Name="TypeBox"
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="OnTypeBoxSelectionChanged">
+                        <ComboBoxItem Content="mssql" />
+                        <ComboBoxItem Content="mysql" />
+                        <ComboBoxItem Content="postgres" />
+                    </ComboBox>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Host" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="4" Grid.Column="2" x:Name="HostBox" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Port" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="6" Grid.Column="2" x:Name="PortBox" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Username" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="8" Grid.Column="2" x:Name="UsernameBox" />
+
+                    <TextBlock Grid.Row="10" Grid.Column="0" Text="Password" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <PasswordBox Grid.Row="10" Grid.Column="2" x:Name="PasswordBox" />
+
+                    <TextBlock Grid.Row="12" Grid.Column="0" x:Name="InstanceLabel" Text="Instance" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="12" Grid.Column="2" x:Name="InstanceBox" />
+
+                    <TextBlock Grid.Row="14" Grid.Column="0" Text="Full sets kept" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBox Grid.Row="14" Grid.Column="2" x:Name="KeepChainsBox" />
+
+                    <CheckBox Grid.Row="16" Grid.Column="2" x:Name="DiffEnabledBox"
+                              Content="Also take differential backups (SQL Server only)" />
+                </Grid>
+
+                <!-- Database discovery section -->
+                <TextBlock Text="Databases" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <TextBlock x:Name="DiscoveryStatusText" Opacity="0.75" Margin="0,0,0,8"
+                           Text="Enter databases below or use Discover to scan from the server." />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Button x:Name="DiscoverButton" Content="Discover"
+                            Click="OnDiscoverClick" Margin="0,0,8,0" />
+                    <Button Content="Select all" Click="OnSelectAllClick" Margin="0,0,8,0" />
+                    <Button Content="Select none" Click="OnSelectNoneClick" />
+                </StackPanel>
+
+                <ListBox x:Name="DatabasesListBox" Height="160"
+                         SelectionMode="Multiple"
+                         HorizontalAlignment="Stretch"
+                         Margin="0,0,0,8"
+                         SelectionChanged="OnDatabasesListBoxSelectionChanged" />
+
+                <TextBox x:Name="DatabasesTextBox"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         MinHeight="60"
+                         TextChanged="OnDatabasesTextBoxChanged" />
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save" Click="OnSaveClick" Style="{StaticResource PrimaryButton}"
+                    IsDefault="True" Margin="0,0,10,0" />
+            <Button Content="Cancel" Click="OnCancelClick" IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</Window>

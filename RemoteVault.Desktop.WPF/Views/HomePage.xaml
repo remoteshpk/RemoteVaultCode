@@ -1,0 +1,201 @@
+<Page
+    x:Class="RemoteVault.Desktop.WPF.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:RemoteVault.Desktop.WPF.ViewModels"
+    mc:Ignorable="d"
+    Style="{StaticResource AppRoot}">
+
+    <Page.Resources>
+        <Style x:Key="TileLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style x:Key="TileValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+        <Style x:Key="TileDetail" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="Tile" TargetType="Border">
+            <Setter Property="Padding" Value="18,16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="MainGrid" Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Greeting -->
+            <TextBlock Grid.Row="0" FontSize="26" FontWeight="SemiBold" Text="{Binding GreetingTitle}" />
+
+            <!-- Status: the answer to "are my files safe?" plus the one main action -->
+            <Border Grid.Row="2" Padding="28,26" CornerRadius="18">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF0F5A7B" Offset="0" />
+                        <GradientStop Color="#FF146C94" Offset="0.6" />
+                        <GradientStop Color="#FF2F8FB5" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Width="56" Height="56" CornerRadius="28" Background="#26FFFFFF"
+                            VerticalAlignment="Center" Margin="0,0,20,0">
+                        <TextBlock Text="{Binding HeroGlyph}" FontFamily="{StaticResource IconFontFamily}"
+                                   FontSize="26" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="White"
+                                   Text="{Binding HeroTitle}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                        <TextBlock FontSize="14" Foreground="#E6FFFFFF" TextWrapping="Wrap"
+                                   Text="{Binding HeroDetail}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,0,0">
+                        <Button Click="OnHeroActionClick" Content="{Binding HeroActionText}"
+                                MinHeight="40" Padding="20,0" FontWeight="SemiBold"
+                                Background="White" BorderBrush="White"
+                                Foreground="{StaticResource BrandAccentPressedBrush}" />
+                        <Button Click="OnOpenRestoreClick" Content="Restore files"
+                                MinHeight="40" Padding="18,0" Margin="10,0,0,0"
+                                Style="{StaticResource OnAccentButton}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Key facts -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Tile}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding BackupTitle}" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding BackupValue}" />
+                        <TextBlock Style="{StaticResource TileDetail}" Text="{Binding BackupDetail}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource Tile}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding NextBackupTitle}" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding NextBackupValue}" />
+                        <TextBlock Style="{StaticResource TileDetail}" Text="{Binding NextBackupDetail}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="4" Style="{StaticResource Tile}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding RestoreTitle}" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding RestoreValue}" />
+                        <TextBlock Style="{StaticResource TileDetail}" Text="{Binding RestoreDetail}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="6" Style="{StaticResource Tile}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TileLabel}" Text="{Binding StorageTitle}" />
+                        <TextBlock Style="{StaticResource TileValue}" Text="{Binding StorageValue}" />
+                        <TextBlock Style="{StaticResource TileDetail}" Text="{Binding StorageDetail}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Recent activity -->
+            <Border Grid.Row="6" Padding="24,22" CornerRadius="18"
+                    Background="{StaticResource CardBackgroundBrush}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding HistoryHeadline}" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Text="{Binding RecentReliabilityDetail}" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding RecentActivity}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type viewModels:HomeActivityItem}">
+                                <Border Padding="4,12" BorderThickness="0,1,0,0"
+                                        BorderBrush="{StaticResource RowSeparatorBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="34" />
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Width="22" Height="22" CornerRadius="11"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                Background="{Binding StatusBackground}" ToolTip="{Binding Status}">
+                                            <TextBlock Foreground="White" FontSize="11"
+                                                       FontFamily="{StaticResource IconFontFamily}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       Text="{Binding StatusGlyph}" />
+                                        </Border>
+                                        <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                                   Text="{Binding Timestamp}" />
+                                        <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                   FontWeight="SemiBold" Text="{Binding Category}" />
+                                        <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" />
+                                            <TextBlock FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}"
+                                                       Text="{Binding Detail}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Tip of the day -->
+                    <Border Margin="0,14,0,0" Padding="14,12" CornerRadius="10" BorderThickness="1"
+                            BorderBrush="{StaticResource InfoStrokeBrush}"
+                            Background="{StaticResource InfoBackgroundBrush}">
+                        <TextBlock TextWrapping="Wrap">
+                            <Run FontWeight="SemiBold" Text="{Binding MotdTitle, Mode=OneWay}" /><Run Text=":  " /><Run Text="{Binding MotdMessage, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

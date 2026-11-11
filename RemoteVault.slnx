@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="RemoteVault.Contracts/RemoteVault.Contracts.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="RemoteVault.Infrastructure/RemoteVault.Infrastructure.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="RemoteVault.Core/RemoteVault.Core.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="RemoteVault.Desktop.WPF/RemoteVault.Desktop.WPF.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>

@@ -1,0 +1,128 @@
+<Window
+    x:Class="RemoteVault.Desktop.WPF.Shell.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="RemoteVault"
+    Width="1200"
+    Height="800"
+    MinWidth="900"
+    MinHeight="600"
+    WindowStartupLocation="CenterScreen"
+    Background="{StaticResource AppBackgroundBrush}"
+    Style="{StaticResource AppRoot}">
+
+    <Window.Resources>
+        <!-- Sidebar entry: icon + label, with an accent bar on the selected item. -->
+        <Style x:Key="NavItem" TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid>
+                            <Border x:Name="Bd" Background="Transparent" CornerRadius="7" MinHeight="40" Padding="14,0">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                            <Border x:Name="Bar" Width="3" Height="18" CornerRadius="1.5"
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Background="{StaticResource BrandAccentBrush}" Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource NavHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource NavSelectedBrush}" />
+                                <Setter TargetName="Bar" Property="Visibility" Value="Visible" />
+                                <Setter Property="Foreground" Value="{StaticResource BrandAccentPressedBrush}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="NavIcon" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource IconFontFamily}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="228" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- NAV PANE -->
+        <Border Grid.Column="0" Background="{StaticResource NavPaneBrush}" BorderBrush="{StaticResource CardStrokeBrush}" BorderThickness="0,0,1,0">
+            <DockPanel>
+                <!-- BRAND HEADER -->
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="20,22,16,18">
+                    <Image Width="36" Height="36" Margin="0,0,12,0" VerticalAlignment="Center"
+                           Source="/Assets/Branding/RemoteVaultLogo.png" Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="RemoteVault" />
+                        <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Text="Backup and restore" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- FOOTER -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="22,0,16,18">
+                    <TextBlock x:Name="VersionText" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Text="Free and open source" />
+                </StackPanel>
+
+                <!-- NAV ITEMS -->
+                <ListBox x:Name="NavListBox"
+                         Margin="10,0,10,0"
+                         VerticalAlignment="Top"
+                         ItemContainerStyle="{StaticResource NavItem}"
+                         SelectionChanged="OnNavSelectionChanged">
+                    <ListBoxItem Tag="home">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE80F;" Style="{StaticResource NavIcon}" />
+                            <TextBlock Text="Home" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="backups">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE898;" Style="{StaticResource NavIcon}" />
+                            <TextBlock Text="Backup" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="restore">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE896;" Style="{StaticResource NavIcon}" />
+                            <TextBlock Text="Restore" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem x:Name="DatabaseNavItem" Tag="database" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8F1;" Style="{StaticResource NavIcon}" />
+                            <TextBlock Text="Databases" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="settings">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE713;" Style="{StaticResource NavIcon}" />
+                            <TextBlock Text="Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- CONTENT FRAME -->
+        <Frame x:Name="ContentFrame" Grid.Column="1" NavigationUIVisibility="Hidden" />
+    </Grid>
+</Window>
